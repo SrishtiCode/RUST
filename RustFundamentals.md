@@ -142,5 +142,159 @@ pub fn area(rect: &Rectangle) -> f32 {
     return rect.0*rect.1;  
 }
 ```
+**Constructors**
+```
+pub struct Book {
+    pub title: String,
+    pub author: String,
+    pub year: i32,
+    pub likes: u32,
+}
+
+impl Book {
+    pub fn new(title: &str, author: &str, year: i32 ) -> Book{
+        Book{
+            title:title.to_string(),
+            author:author.to_string(),
+            year:year,
+            likes: 0
+        }
+    } 
+}
+
+```
+
+**Unit Structs**
+```
+// Define a struct named `Logger`
+// Implement an associated function `log_message`
+// That accepts a `&str` and prints the output.
+
+pub struct Logger;
+impl Logger{
+    pub fn log_message(message: &str){
+        print!("[LOG]: {message}");
+    }
+} 
+
+// Example usage:
+pub fn main() {
+    Logger::log_message("Hello, World!");
+}
+```
+
+**Methods on Structs**
+```
+// 1. Define the struct
+pub struct Counter{
+    count: i32, 
+}
+
+// 2. Implement the associated function and methods
+impl Counter{
+    pub fn new() -> Self{
+        Self{count: 0}
+    }
+    pub fn increment(&mut self){
+        self.count += 1;
+    } 
+    pub fn decrement(&mut self){
+        self.count -= 1;
+    }
+    pub fn get_count(&self) -> i32 {
+        self.count
+    }
+}
+```
+
+**Enums**
+```
+pub enum TrafficLight {
+    // Define enum variants here
+    Red,
+    Yellow,
+    Green,
+}
+
+pub fn light_action(light: &TrafficLight) -> &'static str {
+    // Your code here...
+    match light{
+        TrafficLight::Red => "Stop",
+        TrafficLight::Yellow => "Caution",
+        TrafficLight::Green => "Go",
+    }
+}
+```
+
+**Playing Cards**
+```
+pub enum Card {
+    // Define the Card variants here
+    King,
+    Queen,
+    Jack,
+    Numbered(u8, String),
+}
+
+pub fn card_description(card: &Card) -> String {
+    // Your code here...
+        match card {
+        Card::King => String::from("King"),
+        Card::Queen => String::from("Queen"),
+        Card::Jack => String::from("Jack"),
+        Card::Numbered(value, suit) => format!("{value} of {suit}"),
+    }
+}
+```
+
+**Complex Enums**
+```
+pub enum Animal {
+    // Define the Animal variants here
+    Dog,
+    Cat(String),
+    Bird{ species: String, can_fly: bool }
+}
+
+pub fn describe_animal(animal: &Animal) -> String {
+    // Your code here...
+    match animal{
+        Animal::Dog => String::from("A friendly dog."),
+        Animal::Cat(name) => format!("A cat named {name}."), 
+        Animal::Bird {species, can_fly} => if *can_fly {format!("A {species} that can fly.")} else {format!{"A {species} that cannot fly."}} 
+    }
+}
+```
+
+**Methods on Enums**
+```
+pub enum VehicleStatus {
+    // Define the VehicleStatus variants here
+    Parked,
+    Driving { speed: u32 },
+    BrokenDown(String),
+}
+
+impl VehicleStatus {
+    pub fn is_operational(&self) -> bool {
+        // Your code here...
+        match self{
+            VehicleStatus::Parked => true,
+            VehicleStatus::Driving{speed:_} => true,
+            _ => false
+        }
+    }
+
+    pub fn description(&self) -> String {
+        // Your code here...
+        match self {
+            VehicleStatus::Parked => String::from("The vehicle is parked."),
+            VehicleStatus::Driving { speed } => format!("The vehicle is driving at {speed} km/h."),
+            VehicleStatus::BrokenDown(reason) => format!("The vehicle is broken down: {reason}."),
+        }
+    }
+}
+```
+
 
 
