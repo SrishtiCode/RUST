@@ -104,5 +104,35 @@ Since i is a reference:
 *i → actual value
 You must dereference to read or modify
 
+**Slice Manipulation**
+```
+pub fn update_slice(slice: &mut [i32], indices: &[usize], value: i32) {
+    // Implement your logic here
+    for &i in indices{
+        if i<slice.len(){
+            slice[i]=value;
+        }
+    }
+}
+```
+&i is used to dereference while iterating, so you get the value instead of a reference
+
+**Structs**
+```
+pub struct Person {
+    // Define fields here
+    // Read the description
+    pub name: String,
+    pub age: u8,
+}
+
+pub fn is_adult(person: &Person) -> bool {
+    if person.age >= 18{
+        true
+    }else{
+        false
+    }  
+}
+```
 
 
