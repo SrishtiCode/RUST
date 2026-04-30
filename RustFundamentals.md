@@ -296,5 +296,246 @@ impl VehicleStatus {
 }
 ```
 
+**Deriving PartialEq**
+```
+// Finish the enum definition
+#[derive(PartialEq)]
+#[derive(Debug)]
+pub enum OrderStatus {
+    Pending,
+    Shipped,
+    Cancelled(String),
+}
+
+// Example use case
+pub fn main() {
+    let status1 = OrderStatus::Pending;
+    let status2 = OrderStatus::Pending;
+    assert_eq!(status1, status2);
+
+    let cancelled1 = OrderStatus::Cancelled("Out of stock".to_string());
+    let cancelled2 = OrderStatus::Cancelled("Out of stock".to_string());
+    assert_eq!(cancelled1, cancelled2);
+
+    let cancelled3 = OrderStatus::Cancelled("Customer request".to_string());
+    assert_ne!(cancelled1, cancelled3);
+}
+```
+
+**If Let Enums**
+```
+pub enum Message {
+    Text(String),
+    Number(i32),
+    Quit,
+    None,
+}
+
+pub fn process_text_message(message: &Message) -> String {
+    // Your code here...
+    if let Message::Text(content) = message {
+        return format!("Processed Text: {content}").to_owned();
+    }
+    String::from("Unhandled Message")
+}
+```
+
+**Vectors**
+```
+pub fn add_elements(vec: &mut Vec<i32>, elements: &[i32]) {
+    // Your code here
+    vec.extend(elements);
+}
+
+pub fn remove_element(vec: &mut Vec<i32>, index: usize) {
+    // Your code here
+    if index < vec.len() {
+        vec.remove(index);
+    }
+}
+
+pub fn get_element(vec: &Vec<i32>, index: usize) -> Option<i32> {
+    // Your code here
+    vec.get(index).copied()
+}
+```
+
+OR
+
+```
+pub fn add_elements(vec: &mut Vec<i32>, elements: &[i32]) {
+    // Your code here
+    for i in elements.iter(){
+        vec.push(*i);
+    }
+}
+```
+
+OR
+
+```
+pub fn add_elements(vec: &mut Vec<i32>, elements: &[i32]) {
+    // Your code here
+    vec.extend_from_slice(elements);
+}
+```
+
+**Hashmaps**
+```
+use std::collections::HashMap;
+
+/// Inserts a key-value pair into the hashmap or updates the value if the key exists.
+pub fn insert_or_update(map: &mut HashMap<String, String>, key: String, value: String) {
+    // Your code here...
+    map.insert(key, value);
+}
+
+/// Retrieves the value associated with a key from the hashmap.
+pub fn get_value(map: &HashMap<String, String>, key: String) -> Option<String> {
+    // Your code here...
+    map.get(&key).cloned()
+}
+```
+
+**Animal sanctuary registry**
+```
+use std::collections::HashMap;
+
+type Collection = HashMap<String, Vec<String>>;
+
+//This function should add an animal to a section in the registry. If the section does not exist, it should be created. If the animal is already in the section, it should not be added again.
+pub fn add_animal_to_section(animal: &str, section: &str, registry: &mut Collection) {
+    registry.entry(section.to_string()).and_modify(|animals|{
+        if !animals.contains(&animal.to_string()){
+            animals.push(animal.to_string());
+        }
+    }).or_insert(vec![animal.to_string()]);
+}
+
+//This function should return a list of animals sorted alphabetically in a given section. If the section does not exist, it should return an empty list.
+pub fn get_animals_in_section(section: &str, registry: &Collection) -> Vec<String> {    
+    let mut animals = registry.get(&section.to_string()).cloned().unwrap_or(Vec::new());
+    animals.sort();
+    animals
+}
+
+//This function should return a copy of the entire registry with all animals sorted alphabetically in each section.
+pub fn get_all_animals_sorted(registry: &Collection) -> Vec<String> {
+    let mut animals = Vec::new();
+    for (_, v) in registry.iter() {
+        animals.extend(v.clone());
+    }
+    animals.sort();
+    animals
+}
+```
+
+**Student Grades Tracker**
+```
+use std::collections::HashMap;
+
+// Represents a single student
+pub struct Student {
+    // Student's name (owned String)
+    pub name: String,
+
+    // List of grades (each grade is u8)
+    pub grades: Vec<u8>, 
+}
+
+// Manages multiple students
+pub struct StudentGrades {
+    // HashMap: key = student name, value = Student struct
+    pub students: HashMap<String, Student>,
+}
+
+impl StudentGrades {
+
+    // Constructor → creates an empty StudentGrades
+    pub fn new() -> Self {
+        Self {
+            students: HashMap::new(), // empty map
+        }
+    }
+
+    // Add a new student
+    pub fn add_student(&mut self, name: &str) {
+
+        // entry() checks if the key exists
+        // if NOT → inserts a new Student
+        // if YES → does nothing
+        self.students
+            .entry(name.to_string()) // convert &str → String (key)
+            .or_insert_with(|| Student {
+                name: name.to_string(), // store name inside struct
+                grades: Vec::new(),     // empty grades initially
+            });
+    }
+
+    // Add a grade to an existing student
+    pub fn add_grade(&mut self, name: &str, grade: u8) {
+
+        // get_mut() → gives mutable reference to the student (if exists)
+        if let Some(student) = self.students.get_mut(name) {
+
+            // push new grade into the student's grades vector
+            student.grades.push(grade);
+        }
+        // if student not found → do nothing
+    }
+
+    // Get grades of a student as a slice (&[u8])
+    pub fn get_grades(&self, name: &str) -> &[u8] {
+
+        // get() → immutable reference to student (if exists)
+        // map() → transform Student → &[u8] (grades slice)
+        if let Some(slice) = self.students.get(name)
+                                         .map(|s| s.grades.as_slice()) {
+
+            return slice; // return the grades
+        } else {
+            return &[];   // return empty slice if student not found
+        }
+    }
+}
+```
+
+**Student Grades Tracker 2**
+```
+use std::collections::HashMap;
+
+// Represents a single student
+pub struct Student {
+    pub name: String,      // student's name (owned String)
+    pub grades: Vec<u8>,   // list of grades
+}
+
+impl Student {
+
+    // Add a grade to this student
+    pub fn add_grade(&mut self, grade: u8) {
+        self.grades.push(grade); // push grade into vector
+    }
+
+    // Calculate average grade
+    pub fn average_grade(&self) -> f64 {
+
+        // If no grades → avoid division by zero
+        if self.grades.is_empty() {
+            0.0
+        } else {
+            // Convert each grade (u8 → u32) and sum them
+            let sum: u32 = self.grades
+                .iter()              // iterate over &u8
+                .map(|&g| g as u32) // dereference & convert to u32
+                .sum();             // sum all values
+
+            // Divide sum by number of grades → return average
+            sum as f64 / self.grades.len() as f64
+        }
+    }
+}
+```
+
 
 
